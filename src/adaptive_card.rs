@@ -1110,3 +1110,90 @@ pub struct Choice {
     /// The raw value for the choice. **NOTE:** do not use a , in the value, since a ChoiceSet with isMultiSelect set to true returns a comma-delimited string of choice values.
     pub value: String,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    #[test]
+    fn adaptive_card_colors() {
+        let s = r#"{
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "content": {
+                "type": "AdaptiveCard",
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "version": "1.3",
+                "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Powered by [NaaS](https://naas.cisco.com/home/)",
+                    "horizontalAlignment": "Right",
+                    "size": "Small",
+                    "weight": "Lighter"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://webexapis.com/v1/contents/Y2lzY29zcGFyazovL3VzL0NPTlRFTlQvZjQ1NzFhZDAtNjFiOC0xMWVlLTlmMzAtYzllYjFhYWZlYzBiLzA",
+                    "altText": "https://ciscocx.qualtrics.com/ControlPanel/Graphic.php?IM=IM_bDGCPwtQIWjDCVE"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "From: Anurag Dhringra (office of):",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Please take the Collaboration Engineering Satisfaction Survey to share your feedback on the tools and processes we use every day. ",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Your responses will help us drive initiatives that will make your work life easier and more productive.",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "We look forward to your input.",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Too busy right now?\nSet a reminder in Webex using the message options.",
+                    "horizontalAlignment": "Right",
+                    "wrap": true,
+                    "color": "good"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "(This is available only on Canary)",
+                    "wrap": true,
+                    "horizontalAlignment": "Right",
+                    "color": "good"
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                    {
+                        "type": "Action.OpenUrl",
+                        "title": "ACTION: Take the Survey",
+                        "url": "https://ciscocx.qualtrics.com/jfe/form/SV_a2zbpR5ePCE1Lcq?Q_CHL=gl&Q_DL=EMD_QvLby8Lb0zr7dPk_a2zbpR5ePCE1Lcq_CGC_DYIgkxo92n8egwD&_g_=g"
+                    },
+                    {
+                        "type": "Action.OpenUrl",
+                        "title": "Support (Ask Space)",
+                        "url": "https://eurl.io/#6BU57zCK_"
+                    }
+                    ],
+                    "spacing": "Medium",
+                    "horizontalAlignment": "Center",
+                    "separator": true
+                }
+                ]
+            }
+        }"#;
+
+        let d = serde_json::from_str::<AdaptiveCard>(s).unwrap();
+        let _ = d.body.iter().for_each(|i| println!("{}", i.color));
+    }
+}
