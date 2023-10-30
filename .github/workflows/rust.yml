@@ -20,3 +20,5 @@ jobs:
         run: cargo build --verbose
       - name: Buld examples
         run: cargo build --examples
+      - name: Unit testing
+        run: cargo test
