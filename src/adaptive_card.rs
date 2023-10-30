@@ -922,12 +922,19 @@ pub struct Fact {
 #[allow(missing_docs)]
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub enum Color {
+    #[serde(alias="default", alias="DEFAULT")]
     Default,
+    #[serde(alias="dark", alias="DARK")]
     Dark,
+    #[serde(alias="light", alias="LIGHT")]
     Light,
+    #[serde(alias="accent", alias="ACCENT")]
     Accent,
+    #[serde(alias="good", alias="GOOD")]
     Good,
+    #[serde(alias="warning", alias="WARNING")]
     Warning,
+    #[serde(alias="attention", alias="ATTENTION")]
     Attention,
 }
 
@@ -1118,82 +1125,27 @@ mod tests {
 
     #[test]
     fn adaptive_card_colors() {
-        let s = r#"{
-            "contentType": "application/vnd.microsoft.card.adaptive",
-            "content": {
-                "type": "AdaptiveCard",
-                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                "version": "1.3",
-                "body": [
-                {
-                    "type": "TextBlock",
-                    "text": "Powered by [NaaS](https://naas.cisco.com/home/)",
-                    "horizontalAlignment": "Right",
-                    "size": "Small",
-                    "weight": "Lighter"
-                },
-                {
-                    "type": "Image",
-                    "url": "https://webexapis.com/v1/contents/Y2lzY29zcGFyazovL3VzL0NPTlRFTlQvZjQ1NzFhZDAtNjFiOC0xMWVlLTlmMzAtYzllYjFhYWZlYzBiLzA",
-                    "altText": "https://ciscocx.qualtrics.com/ControlPanel/Graphic.php?IM=IM_bDGCPwtQIWjDCVE"
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "From: Anurag Dhringra (office of):",
-                    "wrap": true
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "Please take the Collaboration Engineering Satisfaction Survey to share your feedback on the tools and processes we use every day. ",
-                    "wrap": true
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "Your responses will help us drive initiatives that will make your work life easier and more productive.",
-                    "wrap": true
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "We look forward to your input.",
-                    "wrap": true
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "Too busy right now?\nSet a reminder in Webex using the message options.",
-                    "horizontalAlignment": "Right",
-                    "wrap": true,
-                    "color": "good"
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "(This is available only on Canary)",
-                    "wrap": true,
-                    "horizontalAlignment": "Right",
-                    "color": "good"
-                },
-                {
-                    "type": "ActionSet",
-                    "actions": [
-                    {
-                        "type": "Action.OpenUrl",
-                        "title": "ACTION: Take the Survey",
-                        "url": "https://ciscocx.qualtrics.com/jfe/form/SV_a2zbpR5ePCE1Lcq?Q_CHL=gl&Q_DL=EMD_QvLby8Lb0zr7dPk_a2zbpR5ePCE1Lcq_CGC_DYIgkxo92n8egwD&_g_=g"
-                    },
-                    {
-                        "type": "Action.OpenUrl",
-                        "title": "Support (Ask Space)",
-                        "url": "https://eurl.io/#6BU57zCK_"
-                    }
-                    ],
-                    "spacing": "Medium",
-                    "horizontalAlignment": "Center",
-                    "separator": true
-                }
-                ]
-            }
-        }"#;
+        for color in vec!["default", "dark", "light", "accent", "good", "warning"].into_iter() {
+            let _color = serde_json::from_str::<Color>(format!("\"{color}\"").as_str()).unwrap();
+            let color = color.to_uppercase();
+            let _color = serde_json::from_str::<Color>(format!("\"{color}\"").as_str()).unwrap();
+            let color = color.chars().next().unwrap().to_uppercase().to_string() + &color[1..];
+            let _color = serde_json::from_str::<Color>(format!("\"{color}\"").as_str()).unwrap();
+        }
 
-        let d = serde_json::from_str::<AdaptiveCard>(s).unwrap();
-        let _ = d.body.iter().for_each(|i| println!("{}", i.color));
+        vec![
+            "default",
+            "dark",
+            "light",
+            "accent",
+            "good",
+            "warning"
+        ].iter().map(|c| {[
+            c.to_string(),
+            c.to_string().to_uppercase(),
+            c.chars().next().unwrap().to_uppercase().to_string() + &c[1..]
+        ]}).flatten().for_each(|c| {
+            let _color = serde_json::from_str::<Color>(format!("\"{c}\"").as_str()).unwrap();
+        })
     }
 }
