@@ -968,7 +968,9 @@ pub enum Spacing {
 #[allow(missing_docs)]
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub enum ChoiceInputStyle {
+    #[serde(alias="compact", alias="COMPACT")]
     Compact,
+    #[serde(alias="expanded", alias="EXPANDED")]
     Expanded,
 }
 
@@ -1126,14 +1128,6 @@ mod tests {
 
     #[test]
     fn adaptive_card_colors() {
-        for color in vec!["default", "dark", "light", "accent", "good", "warning"].into_iter() {
-            let _color = serde_json::from_str::<Color>(format!("\"{color}\"").as_str()).unwrap();
-            let color = color.to_uppercase();
-            let _color = serde_json::from_str::<Color>(format!("\"{color}\"").as_str()).unwrap();
-            let color = color.chars().next().unwrap().to_uppercase().to_string() + &color[1..];
-            let _color = serde_json::from_str::<Color>(format!("\"{color}\"").as_str()).unwrap();
-        }
-
         vec![
             "default",
             "dark",
@@ -1151,12 +1145,26 @@ mod tests {
     }
 
     #[test]
-    fn adaptive_card_weights(){
+    fn adaptive_card_weights() {
         let column = r#"{
                                 "type": "Column",
                                 "width": 4,
                                 "items": []
                             }"#;
         let _weight = serde_json::from_str::<Column>(column).unwrap();
+    }
+
+    #[test]
+    fn adaptive_card_choice_input_style() {
+        vec![
+            "compact",
+            "expanded"
+        ].iter().map(|s| {[
+            s.to_string(),
+            s.to_string().to_uppercase(),
+            s.chars().next().unwrap().to_uppercase().to_string() + &s[1..]
+        ]}).flatten().for_each(|s| {
+            let _choice_input_style = serde_json::from_str::<ChoiceInputStyle>(format!("\"{s}\"").as_str()).unwrap();
+        })
     }
 }
