@@ -8,6 +8,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::convert::TryInto;
 
 /// Adaptive Card structure for message attachment
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
@@ -848,7 +849,7 @@ pub struct Column {
     spacing: Option<Spacing>,
     /// "auto", "stretch", a number representing relative width of the column in the column group, or in version 1.1 and higher, a specific pixel width, like "50px".
     #[serde(skip_serializing_if = "Option::is_none")]
-    width: Option<String>,
+    width: Option<usize>,
     /// A unique identifier associated with the item.
     #[serde(skip_serializing_if = "Option::is_none")]
     id: Option<String>,
@@ -903,8 +904,8 @@ impl Column {
     }
 
     /// Sets width
-    pub fn set_width<T: Into<String>>(&mut self, s: T) -> Self {
-        self.width = Some(s.into());
+    pub fn set_width<T: Into<usize>>(&mut self, s: T) -> Self {
+        self.width = s.try_into().ok();
         self.into()
     }
 }
@@ -1147,5 +1148,15 @@ mod tests {
         ]}).flatten().for_each(|c| {
             let _color = serde_json::from_str::<Color>(format!("\"{c}\"").as_str()).unwrap();
         })
+    }
+
+    #[test]
+    fn adaptive_card_weights(){
+        let column = r#"{
+                                "type": "Column",
+                                "width": 4,
+                                "items": []
+                            }"#;
+        let _weight = serde_json::from_str::<Column>(column).unwrap();
     }
 }
