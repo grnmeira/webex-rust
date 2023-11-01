@@ -724,6 +724,16 @@ impl Webex {
             .chain_err(|| format!("Failed to list {}", std::any::type_name::<T>()))
     }
 
+    /// List messages in a room
+    pub async fn list_messages_in_room(&self, gid: &GlobalId) -> Result<Vec<Message>, Error> {
+        let endpoint = format!("{}/?roomId={}", Message::API_ENDPOINT, gid.id());
+        self.client
+            .api_get::<ListResult<Message>>(&endpoint, AuthorizationType::Bearer(&self.token))
+            .await
+            .map(|result| result.items)
+            .chain_err(|| format!("Failed to list Messages in room {}", gid.id()))
+    }
+
     async fn get_devices(&self) -> Result<Vec<DeviceData>, Error> {
         match self
             .client
