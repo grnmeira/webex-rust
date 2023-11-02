@@ -18,7 +18,7 @@ pub struct AdaptiveCard {
     pub card_type: String,
     /// Schema version that this card requires. If a client is lower than this version, the fallbackText will be rendered.
     /// Maximum version is 1.1
-    pub version: String,
+    pub version: Option<String>,
     /// The card elements to show in the primary card region.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub body: Option<Vec<CardElement>>,
@@ -49,7 +49,7 @@ impl AdaptiveCard {
     pub fn new() -> Self {
         Self {
             card_type: "AdaptiveCard".to_string(),
-            version: "1.1".to_string(),
+            version: Some("1.1".to_string()),
             body: None,
             actions: None,
             select_action: None,
